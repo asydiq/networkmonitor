@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Network Watchdog</title>
+  <style>
+    body { font-family: Arial; background: #111; color: #eee; }
+    .device { padding: 10px; margin: 5px; border: 1px solid #444; }
+    .online { background: #2d8f2d; }
+    .offline { background: #bf2626; }
+  </style>
+</head>
+<body>
+  <h1>📡 Live Device Status</h1>
+  <div id="devices"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const container = document.getElementById('devices');
+    const deviceMap = {};
+
+    socket.on('updateStatus', ({ ip, name, status }) => {
+      const key = ip;
+      if (!deviceMap[key]) {
+        deviceMap[key] = document.createElement('div');
+        deviceMap[key].className = 'device';
+        container.appendChild(deviceMap[key]);
+      }
+
+      deviceMap[key].className = 'device ' + status;
+      deviceMap[key].textContent = `${name} (${ip}) → ${status.toUpperCase()}`;
+    });
+  </script>
+</body>
+</html>
